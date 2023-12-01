@@ -7,7 +7,7 @@ The structure of the repo:
 ├── input-check.js  # a helper function to validate the inputs
 ```
 
-To run day**_xx_**:
+To run day **_xx_**:
 
 ```
 node dayxx path/to/input/file
