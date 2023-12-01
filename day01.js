@@ -1,13 +1,10 @@
-const fs = require("fs");
-const validate = require("./input-check");
+const readFrom = require("./read-input");
 
 const args = process.argv;
-const input = validate(args);
+const input = readFrom(args);
 if (!input) return;
 
-const data = fs.readFileSync(input, "utf8");
-
-const partOneResult = data.split("\n").reduce((sum, line) => {
+const partOneResult = input.split("\n").reduce((sum, line) => {
     const chars = line.split("");
     const firstDigit = chars.find((c) => parseInt(c));
     const secondDigit = chars.reverse().find((c) => parseInt(c));
@@ -30,9 +27,7 @@ const digits = [
     ["nine", "9"],
 ];
 
-const partTwoResult = data.split("\n").reduce((sum, line) => {
-    if (!line.length) return sum;
-
+const partTwoResult = input.split("\n").reduce((sum, line) => {
     let [minIndex, firstDigit] = [line.length, -1];
     let [maxIndex, secondDigit] = [-1, -1];
 
