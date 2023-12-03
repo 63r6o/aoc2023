@@ -4,98 +4,84 @@ const args = process.argv;
 const input = readFrom(args);
 if (!input) return;
 
-let partOneResult = 0;
 const lines = input.split("\n");
 
-const checkHorizontal = (line, start, end) => {
-    const before = line[start - 1];
-    const after = line[end];
+const checkVertical = (lineI, start, end) => {
+    const symbols = lines[lineI].matchAll(/[^0-9|.]/g);
 
-    if (parseInt(before)) console.log(before);
-    if (parseInt(after)) console.log(after);
-
-    if ((before && before !== ".") || (after && after !== ".")) {
-        return true;
+    for (const symbol of symbols) {
+        if (start <= symbol.index && symbol.index <= end) return true;
     }
 
     return false;
 };
 
-const checkVertical = (lineI, start, end) => {
-    for (let i = start - 1; i <= end; i++) {
-        if (0 <= lineI - 1 && 0 <= i && i < lines[lineI].length) {
-            if (lines[lineI - 1][i] !== "." && !parseInt(lines[lineI - 1][i])) {
-                return true;
-            }
-        }
-
-        if (lineI + 1 < lines.length && 0 <= i && i < lines[lineI].length) {
-            if (lines[lineI + 1][i] !== "." && !parseInt(lines[lineI + 1][i]))
-                return true;
-        }
-    }
-};
-
-lines.forEach((line, i) => {
+const partOneResult = lines.reduce((sum, line, i) => {
     const numbers = line.matchAll(/\d+/g);
 
+    let lineSum = 0;
     for (const number of numbers) {
+        const start = number.index - 1;
+        const end = number.index + number[0].length;
+
         if (
-            checkHorizontal(line, number.index, number.index + number[0].length) ||
-            checkVertical(i, number.index, number.index + number[0].length)
+            (0 < i && checkVertical(i - 1, start, end)) ||
+            (i < lines.length - 1 && checkVertical(i + 1, start, end)) ||
+            (line[start] && line[start] !== ".") ||
+            (line[end] && line[end] !== ".")
         ) {
-            partOneResult += parseInt(number[0]);
+            lineSum += parseInt(number[0]);
         }
     }
-});
+
+    return sum + lineSum;
+}, 0);
 
 console.log(partOneResult);
-
-let partTwoResult = 0;
-
-const getHorizontals = (lineI, gearI) => {
-    const range = [gearI - 1, gearI, gearI + 1];
-
-    const numbers = lines[lineI].matchAll(/\d+/g);
-
-    let res = [];
-    for (const number of numbers) {
-        const start = number.index;
-        const end = number.index + number[0].length;
-        for (let i = start; i < end; i++) {
-            if (range.includes(i)) {
-                res.push(parseInt(number[0]));
-                break;
-            }
-        }
-    }
-    return res;
-};
 
 const getVerticals = (lineI, gearI) => {
     const numbers = lines[lineI].matchAll(/\d+/g);
 
-    let res = [];
+    let verticals = [];
     for (const number of numbers) {
-        const start = number.index;
+        const start = number.index - 1;
         const end = number.index + number[0].length;
-        if (start === gearI + 1 || end === gearI) res.push(parseInt(number[0]));
+
+        if (start <= gearI && gearI <= end) verticals.push(parseInt(number[0]));
     }
-    return res;
+
+    return verticals;
 };
 
-lines.forEach((line, i) => {
-    const gearSymbols = line.matchAll(/\*/g);
+const getHorizontals = (lineI, gearI) => {
+    const numbers = lines[lineI].matchAll(/\d+/g);
 
-    for (const gear of gearSymbols) {
-        const top = 0 < i ? getHorizontals(i - 1, gear.index) : [];
-        const adj = getVerticals(i, gear.index);
-        const under = i < lines.length - 1 ? getHorizontals(i + 1, gear.index) : [];
-        const adjs = top.concat(adj).concat(under);
-        if (adjs.length === 2) {
-            partTwoResult += adjs[0] * adjs[1];
-        }
+    let horizontals = [];
+    for (const number of numbers) {
+        const start = number.index - 1;
+        const end = number.index + number[0].length;
+
+        if (start === gearI || end === gearI) horizontals.push(parseInt(number[0]));
     }
-});
+
+    return horizontals;
+};
+
+const partTwoResult = lines.reduce((sum, line, i) => {
+    const gears = line.matchAll(/\*/g);
+
+    let lineSum = 0;
+    for (const gear of gears) {
+        const top = 0 < i ? getVerticals(i - 1, gear.index) : [];
+        const bottom = i < line.length - 1 ? getVerticals(i + 1, gear.index) : [];
+        const horizontals = getHorizontals(i, gear.index);
+
+        const adjecents = top.concat(bottom).concat(horizontals);
+
+        if (adjecents.length === 2) lineSum += adjecents.reduce((a, b) => a * b);
+    }
+
+    return sum + lineSum;
+}, 0);
 
 console.log(partTwoResult);
