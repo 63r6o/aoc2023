@@ -43,10 +43,8 @@ const partTwoResult = lines
                 return points;
             }, 0);
 
-            for (let i = 0; i < copies[lineI]; i++) {
-                for (let i = 0; i < points; i++) {
-                    copies[lineI + i + 1] += 1;
-                }
+            for (let i = 0; i < points; i++) {
+                copies[lineI + i + 1] += copies[lineI];
             }
 
             return copies;
