@@ -11,10 +11,10 @@ const partOneResult = lines.reduce((sum, line) => {
     const winningNumbers = winningRaw
         .split(": ")[1]
         .split(" ")
-        .map((num) => num.trim());
+        .filter((n) => n !== "");
 
     const points = numbersRaw.split(" ").reduce((points, number) => {
-        if (number !== "" && winningNumbers.includes(number.trim())) {
+        if (winningNumbers.includes(number)) {
             return points > 0 ? points + points : 1;
         }
 
@@ -33,10 +33,10 @@ const partTwoResult = lines
             const winningNumbers = winningRaw
                 .split(": ")[1]
                 .split(" ")
-                .map((num) => num.trim());
+                .filter((n) => n !== "");
 
             const points = numbersRaw.split(" ").reduce((points, number) => {
-                if (number !== "" && winningNumbers.includes(number.trim())) {
+                if (winningNumbers.includes(number)) {
                     return points + 1;
                 }
 
