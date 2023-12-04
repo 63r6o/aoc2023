@@ -27,30 +27,27 @@ const partOneResult = lines.reduce((sum, line) => {
 console.log(partOneResult);
 
 const partTwoResult = lines
-    .reduce(
-        (copies, line, lineI) => {
-            const [winningRaw, numbersRaw] = line.split(" | ");
-            const winningNumbers = winningRaw
-                .split(": ")[1]
-                .split(" ")
-                .filter((n) => n !== "");
+    .reduce((copies, line, lineI) => {
+        const [winningRaw, numbersRaw] = line.split(" | ");
+        const winningNumbers = winningRaw
+            .split(": ")[1]
+            .split(" ")
+            .filter((n) => n !== "");
 
-            const points = numbersRaw.split(" ").reduce((points, number) => {
-                if (winningNumbers.includes(number)) {
-                    return points + 1;
-                }
-
-                return points;
-            }, 0);
-
-            for (let i = 0; i < points; i++) {
-                copies[lineI + i + 1] += copies[lineI];
+        const points = numbersRaw.split(" ").reduce((points, number) => {
+            if (winningNumbers.includes(number)) {
+                return points + 1;
             }
 
-            return copies;
-        },
-        [...Array(lines.length)].map((_) => 1)
-    )
+            return points;
+        }, 0);
+
+        for (let i = 0; i < points; i++) {
+            copies[lineI + i + 1] += copies[lineI];
+        }
+
+        return copies;
+    }, Array(lines.length).fill(1))
     .reduce((sum, copy) => sum + copy);
 
 console.log(partTwoResult);
