@@ -62,7 +62,7 @@ const getOverlap = (seedRange, mapRange) => {
     ];
 };
 
-const locationRanges = parts.reduce((destinations, mapLine, i) => {
+const locationRanges = parts.reduce((destinations, mapLine) => {
     const maps = mapLine
         .split(":\n")[1]
         .split("\n")
@@ -101,10 +101,8 @@ const locationRanges = parts.reduce((destinations, mapLine, i) => {
     return newDestinations;
 }, partTwoSeeds);
 
-let partTwoResult = Infinity;
-
-for (const range of locationRanges) {
-    partTwoResult = range[0] < partTwoResult ? range[0] : partTwoResult;
-}
+const partTwoResult = locationRanges.reduce((min, [start, _]) => {
+    return start < min ? start : min;
+}, Infinity);
 
 console.log(partTwoResult);
