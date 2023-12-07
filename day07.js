@@ -36,7 +36,7 @@ const labelsWithJoker = [
     "J",
 ];
 
-const getTypeStrengthTest = (hand, withJoker) => {
+const getTypeStrength = (hand, withJoker) => {
     const cards = new Map();
 
     const jokers = hand.reduce((js, c) => {
@@ -76,8 +76,7 @@ const sortHands = (a, b, withJoker) => {
     const handB = b.split(" ")[0].split("");
 
     const typeDiff =
-        getTypeStrengthTest(handB, withJoker) -
-        getTypeStrengthTest(handA, withJoker);
+        getTypeStrength(handB, withJoker) - getTypeStrength(handA, withJoker);
 
     if (typeDiff === 0) {
         for (let i = 0; i < handA.length; i++) {
