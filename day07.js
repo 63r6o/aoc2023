@@ -96,26 +96,26 @@ const sortHands = (a, b, withJoker) => {
     return typeDiff;
 };
 
-const partOneSortedHands = input
+const partOneResult = input
     .split("\n")
-    .sort((a, b) => sortHands(a, b, false));
+    .sort((a, b) => sortHands(a, b, false))
+    .reverse()
+    .reduce((sum, line, i) => {
+        const bid = parseInt(line.split(" ")[1]);
 
-const partOneResult = partOneSortedHands.reverse().reduce((sum, line, i) => {
-    const bid = parseInt(line.split(" ")[1]);
-
-    return sum + bid * (i + 1);
-}, 0);
+        return sum + bid * (i + 1);
+    }, 0);
 
 console.log(partOneResult);
 
-const partTwoSortedHands = input
+const partTwoResult = input
     .split("\n")
-    .sort((a, b) => sortHands(a, b, true));
+    .sort((a, b) => sortHands(a, b, true))
+    .reverse()
+    .reduce((sum, line, i) => {
+        const bid = parseInt(line.split(" ")[1]);
 
-const partTwoResult = partTwoSortedHands.reverse().reduce((sum, line, i) => {
-    const bid = parseInt(line.split(" ")[1]);
-
-    return sum + bid * (i + 1);
-}, 0);
+        return sum + bid * (i + 1);
+    }, 0);
 
 console.log(partTwoResult);
