@@ -106,5 +106,6 @@ const calcPolygonArea = (vertices) => {
 };
 
 // magic
+// https://en.wikipedia.org/wiki/Pick's_theorem#Proofs
 const partTwoResult = calcPolygonArea(pipes) - pipes.length / 2 + 1;
 console.log(partTwoResult);
