@@ -22,7 +22,6 @@ const expandMapBy = (size, numberOfGalaxies = 1) => {
     for (let i = 0; i < wideGalaxyMap[0].length; i++) {
         let needsToExpand = true;
         for (let j = 0; j < wideGalaxyMap.length; j++) {
-            // console.log(wideGalaxyMap[j][i]);
             if (wideGalaxyMap[j][i].galaxy) {
                 needsToExpand = false;
                 continue;
