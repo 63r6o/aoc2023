@@ -4,86 +4,55 @@ const args = process.argv;
 const input = readFrom(args);
 if (!input) return;
 
-const expandMapBy = (size, numberOfGalaxies = 1) => {
-    const wideGalaxyMap = input.split("\n").map((line) => {
-        const mapped = line
-            .split("")
-            .map((s) =>
-                s === "#"
-                    ? { galaxy: true, size: 1, number: numberOfGalaxies++ }
-                    : { galaxy: false, size: 1 }
-            );
+const map = input.split("\n").map((line) => line.split(""));
+const expandableRow = Array(map.length).fill(true);
+const expandableCol = Array(map[0].length).fill(true);
+const galaxyCords = [];
 
-        return mapped.every((s) => !s.galaxy)
-            ? mapped.map((s) => (s.galaxy ? s : { ...s, size: s.size + size - 1 })) // 1000000
-            : mapped;
-    });
+map.forEach((line, i) =>
+    line.forEach((s, j) => {
+        if (s === "#") {
+            galaxyCords.push([i, j]);
+            expandableRow[i] = false;
+            expandableCol[j] = false;
+        }
+    })
+);
 
-    for (let i = 0; i < wideGalaxyMap[0].length; i++) {
-        let needsToExpand = true;
-        for (let j = 0; j < wideGalaxyMap.length; j++) {
-            if (wideGalaxyMap[j][i].galaxy) {
-                needsToExpand = false;
-                continue;
+const getResultTest = (expandSize) => {
+    let result = 0;
+
+    for (let i = 0; i < galaxyCords.length; i++) {
+        for (let j = i + 1; j < galaxyCords.length; j++) {
+            const [startRow, startCol] = galaxyCords[i];
+            const [destRow, destCol] = galaxyCords[j];
+
+            let expandedRows = 0;
+            for (let k = startRow; k < destRow; k++) {
+                expandedRows += expandableRow[k] ? expandSize - 1 : 0;
             }
-        }
 
-        if (!needsToExpand) continue;
+            let expandedCols = 0;
+            for (
+                let k = Math.min(startCol, destCol);
+                k < Math.max(startCol, destCol);
+                k++
+            ) {
+                expandedCols += expandableCol[k] ? expandSize - 1 : 0;
+            }
 
-        for (let j = 0; j < wideGalaxyMap.length; j++) {
-            wideGalaxyMap[j][i].size += size - 1;
-        }
-    }
-
-    return wideGalaxyMap;
-};
-
-const getGalaxyCoordinatesFrom = (map) => {
-    const galaxyCoordinates = [];
-    for (let i = 0; i < map.length; i++) {
-        for (let j = 0; j < map[0].length; j++) {
-            if (map[i][j].galaxy) galaxyCoordinates.push([i, j]);
+            result +=
+                Math.abs(startRow - destRow) +
+                Math.abs(startCol - destCol) +
+                expandedCols +
+                expandedRows;
         }
     }
-
-    return galaxyCoordinates;
+    return result;
 };
 
-const partOneMap = expandMapBy(2);
-const partTwoMap = expandMapBy(1000000);
-
-const galaxyCoordinates = getGalaxyCoordinatesFrom(partOneMap);
-const getResult = (map) =>
-    galaxyCoordinates.reduce((res, startGalaxy, i) => {
-        return (
-            res +
-            galaxyCoordinates.slice(i).reduce((stepSums, endGalaxy) => {
-                const smallerRow =
-                    startGalaxy[0] < endGalaxy[0] ? startGalaxy : endGalaxy;
-                const biggerRow =
-                    startGalaxy[0] < endGalaxy[0] ? endGalaxy : startGalaxy;
-
-                const smallerCol =
-                    startGalaxy[1] < endGalaxy[1] ? startGalaxy : endGalaxy;
-                const biggerCol =
-                    startGalaxy[1] < endGalaxy[1] ? endGalaxy : startGalaxy;
-
-                let stepSum = 0;
-                for (let j = smallerCol[1]; j < biggerCol[1]; j++) {
-                    stepSum += map[smallerCol[0]][j].size;
-                }
-
-                for (let j = smallerRow[0]; j <= biggerRow[0] - 1; j++) {
-                    stepSum += map[j][biggerRow[1]].size;
-                }
-
-                return stepSums + stepSum;
-            }, 0)
-        );
-    }, 0);
-
-const partOneResult = getResult(partOneMap);
+const partOneResult = getResultTest(2);
 console.log(partOneResult);
 
-const partTwoResult = getResult(partTwoMap);
+const partTwoResult = getResultTest(1000000);
 console.log(partTwoResult);
