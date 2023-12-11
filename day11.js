@@ -69,12 +69,12 @@ const getResult = (map) =>
                     startGalaxy[1] < endGalaxy[1] ? endGalaxy : startGalaxy;
 
                 let stepSum = 0;
-                for (let i = smallerCol[1]; i < biggerCol[1]; i++) {
-                    stepSum += map[smallerCol[0]][i].size;
+                for (let j = smallerCol[1]; j < biggerCol[1]; j++) {
+                    stepSum += map[smallerCol[0]][j].size;
                 }
 
-                for (let i = smallerRow[0]; i <= biggerRow[0] - 1; i++) {
-                    stepSum += map[i][biggerRow[1]].size;
+                for (let j = smallerRow[0]; j <= biggerRow[0] - 1; j++) {
+                    stepSum += map[j][biggerRow[1]].size;
                 }
 
                 return stepSums + stepSum;
